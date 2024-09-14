@@ -40,7 +40,7 @@ public class P2 {
 		        Thread.sleep(1000);
 		        frame.getContentPane().setBackground(Color.GREEN);
 		        frame.setVisible(true);
-		        InetSocketAddress adrDest = new InetSocketAddress("192.168.130.163", 4001);
+		        InetSocketAddress adrDest = new InetSocketAddress("127.0.0.1", 4001);
 		        byte[] bufE = new String("red").getBytes();
 		        DatagramPacket dpE = new DatagramPacket(bufE, bufE.length, adrDest);
 		        socket.send(dpE);
