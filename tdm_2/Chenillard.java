@@ -10,11 +10,7 @@ import java.io.IOException;
 import javax.swing.JFrame;
 
 public class Chenillard {
-	
-	public int portSelf;
-	public int portDest;
-	
-	
+
 	
 	public static void main(String[] args) throws Exception
     {
