@@ -20,12 +20,10 @@ public class Clientadition
         clientTCP.execute();                
     }
 
-    /**
-     * Le client cree une socket, envoie un message au serveur
-     * et attend la reponse 
-     * 
-     */
-    private void execute() throws IOException
+    
+  
+    
+    private void execute() throws IOException, InterruptedException
     {
         //
         System.out.println("Demarrage du client ...");
@@ -34,7 +32,7 @@ public class Clientadition
         Socket socket = new Socket();
 
         // Connexion au serveur 
-        InetSocketAddress adrDest = new InetSocketAddress("127.0.0.1", 5099);
+        InetSocketAddress adrDest = new InetSocketAddress("127.0.0.1", 7500);
         socket.connect(adrDest);        
 
         
@@ -51,16 +49,22 @@ public class Clientadition
         	if (lenBufR!=-1)
         	{
         		String reponse = new String(bufR, 0 , lenBufR );
-        		for (int i = 0; i< reponse.length(); i++) {
-            		String bufC = reponse.substring(i,i+1);
-            		if(bufC.startsWith("+") ) {
+        		System.out.println(reponse);
+        		if(reponse.startsWith("SCORE")){
+        			Thread.sleep(150000);
+        			continue;
+        		}
+        		for (int i = 0; i< (reponse.length()); i++) {
+            		char bufC = reponse.charAt(i);
+            		System.out.println(bufC);
+            		if(bufC == '+') {
             			String bufS = reponse.substring(i-combnum, i);
             			num1 = Integer.parseInt(bufS);
             			combnum = 0;
             			continue;
             		}
-            		else if(bufC.startsWith("?")) {
-            			String bufS = reponse.substring(i-combnum, i);
+            		else if(bufC == '?') {
+            			String bufS = reponse.substring(i-combnum-1, i-1);
             			num2 = Integer.parseInt(bufS);
             			combnum = 0;
             			
@@ -68,16 +72,16 @@ public class Clientadition
             			byte[] bufE = new String(numr + ";").getBytes();
             	        OutputStream os = socket.getOutputStream();
             	        os.write(bufE);
+            	        System.out.println(numr);
+            		}
+            		else if(bufC == '=') {
+            			continue;
             		}
             		else {
-            			
             			combnum++;
             		}
             	}
-            
         	}
-        	
-        	
         }
         // Fermeture de la socket
         socket.close();
