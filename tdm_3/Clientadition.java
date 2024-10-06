@@ -46,17 +46,18 @@ public class Clientadition
         	byte[] bufR = new byte[2048];
         	InputStream is = socket.getInputStream();
         	lenBufR = is.read(bufR);
+        	combnum =0;
         	if (lenBufR!=-1)
         	{
         		String reponse = new String(bufR, 0 , lenBufR );
         		System.out.println(reponse);
         		if(reponse.startsWith("SCORE")){
-        			Thread.sleep(150000);
+        			Thread.sleep(15000);
+        			System.out.println(reponse);
         			continue;
         		}
         		for (int i = 0; i< (reponse.length()); i++) {
             		char bufC = reponse.charAt(i);
-            		System.out.println(bufC);
             		if(bufC == '+') {
             			String bufS = reponse.substring(i-combnum, i);
             			num1 = Integer.parseInt(bufS);
@@ -65,6 +66,7 @@ public class Clientadition
             		}
             		else if(bufC == '?') {
             			String bufS = reponse.substring(i-combnum-1, i-1);
+            			System.out.println(bufS);
             			num2 = Integer.parseInt(bufS);
             			combnum = 0;
             			
