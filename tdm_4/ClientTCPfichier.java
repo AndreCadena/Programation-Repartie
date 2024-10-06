@@ -3,6 +3,7 @@ package tcp;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
@@ -35,15 +36,31 @@ public class ClientTCPfichier
         // Connexion au serveur 
         InetSocketAddress adrDest = new InetSocketAddress("127.0.0.1", 4001);
         socket.connect(adrDest);        
-        FileOutputStream fos = new FileOutputStream("/home/userir/file_client.txt");
-        byte[] buf = new byte[10000];
+        String filename = "D:\\Eclipse HD\\ESISAR\\eclipse-workspace\\tdm_4\\test1.txt";
+        OutputStream os = socket.getOutputStream();
+		InputStream is = socket.getInputStream();
+		
+        byte[] bufE = new String(filename+"!").getBytes();
+		os.write(bufE);
+		System.out.println("Nom du fichier envoyé");
+
+		FileOutputStream fos = new FileOutputStream(filename+"-copie.txt");
+		byte[] bufR = new byte[2048];
+		int lenBufR = is.read(bufR);
+        if (lenBufR!=-1)
+        {
+            String message = new String(bufR, 0 , lenBufR);
+            System.out.println(message);
+        }
+		
+        byte[] buf = new byte[10*1024];
 
         // Attente de la reponse 
-        InputStream is = socket.getInputStream();
-        int lenBufR = is.read(buf);
+        lenBufR = is.read(buf);
         while (lenBufR!=-1)
         { 
-        	fos.write(buf,0,10000);
+        	fos.write(buf,0,lenBufR);
+        	lenBufR = is.read(buf);
         }
         fos.close();
         // Fermeture de la socket

@@ -1,7 +1,9 @@
 package tcp;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -20,7 +22,7 @@ public class ServeurTCPfichier
 
     }
 
-
+    
 
     private void execute() throws IOException
     {
@@ -28,7 +30,6 @@ public class ServeurTCPfichier
         System.out.println("Demarrage du serveur ...");
 
         // Le serveur se declare aupres de la couche transport
-        // sur le port 5099
         ServerSocket socketEcoute = new ServerSocket();
         socketEcoute.bind(new InetSocketAddress(4001));
 
@@ -38,18 +39,26 @@ public class ServeurTCPfichier
         Socket socketConnexion = socketEcoute.accept();
 
         // Affichage du port et de l'ip du client 
-        System.out.println("Un client est connecté");
-        System.out.println("IP:"+socketConnexion.getInetAddress());
-        System.out.println("Port:"+socketConnexion.getPort());
-
-        FileInputStream fis = new FileInputStream("/home/userir/file_serveur.txt");
-        byte[] buf = new byte[10000];
+        InputStream is = socketConnexion.getInputStream();
+		OutputStream os = socketConnexion.getOutputStream();
+		
+		String filename = readFileName(is);
+        FileInputStream fis = new FileInputStream(filename);
+       
+        
+        File f = new File(filename);
+        long fileSize = f.length();
+        
+        byte[] bufE = new String("Taille du fichier= " + fileSize + " octets").getBytes();
+        os.write(bufE);
+        
+        
+        byte[] buf = new byte[10*1024];
 
         int len = fis.read(buf);
         while(len!=-1)
         {
-        	OutputStream os = socketConnexion.getOutputStream();
-            os.write(buf);
+            os.write(buf,0,len);
             len = fis.read(buf);
         }
         fis.close();
@@ -63,5 +72,23 @@ public class ServeurTCPfichier
         socketEcoute.close();
         System.out.println("Arret du serveur .");
     }
+   
+    private String readFileName(InputStream is) throws IOException
+	{
+		
+		String fileName ="";
+		byte[] buf = new byte[2048];
+		
+		while(fileName.endsWith("!")==false)
+		{
+			int nbRead = is.read(buf);
+			String str = new String(buf,0,nbRead);
+			fileName = fileName+str;
+		}
+		
+		// On enleve ensuite le ! 
+		fileName = fileName.substring(0, fileName.length()-1);
+		return fileName;
+	}
 
 }
